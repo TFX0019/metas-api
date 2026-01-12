@@ -1,0 +1,45 @@
+services:
+  - type: web
+    name: gamification-api
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: APP_NAME
+        value: GamificationAPI
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_KEY
+        generateValue: true
+      - key: LOG_CHANNEL
+        value: stack
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        fromDatabase:
+          name: gamification-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: gamification-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: gamification-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: gamification-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: gamification-db
+          property: password
+
+databases:
+  - name: gamification-db
+    databaseName: gamification_db
+    user: gamification_user
+    plan: free
