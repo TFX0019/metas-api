@@ -11,18 +11,49 @@ class TareaController extends Controller
     public function index(Meta $meta, Request $request)
     {
         if ($meta->iduser !== $request->user()->id) {
-            return response()->json(['message' => 'No autorizado'], 403);
+            return response()->json([
+                'ok' => false,
+                'message' => 'No autorizado',
+                'error' => 'No tienes permiso para ver estas tareas',
+                'data' => null,
+            ], 403);
         }
 
         $tareas = $meta->tareas;
+        return response()->json([
+            'ok' => true,
+            'message' => 'Tareas obtenidas exitosamente',
+            'error' => null,
+            'data' => $tareas,
+        ]);
+    }
 
-        return response()->json($tareas);
+    public function allTareas(Request $request) {
+        $perPage = $request->input('per_page', 15);
+
+        $tareas = Tarea::whereHas('meta', function ($query) use ($request) {
+            $query->where('iduser', $request->user()->id);
+        })
+        ->with('meta:id,meta,puntaje')
+        ->paginate($perPage);
+
+        return response()->json([
+            'ok' => true,
+            'message' => 'Todas las tareas obtenidas exitosamente',
+            'error' => null,
+            'data' => $tareas,
+        ]);
     }
 
     public function store(Request $request, Meta $meta)
     {
         if ($meta->iduser !== $request->user()->id) {
-            return response()->json(['message' => 'No autorizado'], 403);
+            return response()->json([
+                'ok' => false,
+                'message' => 'No autorizado',
+                'error' => 'No tienes permiso para crear tareas en esta meta',
+                'data' => null,
+            ], 403);
         }
 
         $request->validate([
@@ -41,24 +72,41 @@ class TareaController extends Controller
         ]);
 
         return response()->json([
+            'ok' => true,
             'message' => 'Tarea creada exitosamente',
-            'tarea' => $tarea,
+            'error' => null,
+            'data' => $tarea,
         ], 201);
     }
 
     public function show(Request $request, Meta $meta, Tarea $tarea)
     {
         if ($meta->iduser !== $request->user()->id || $tarea->idmeta !== $meta->id) {
-            return response()->json(['message' => 'No autorizado'], 403);
+            return response()->json([
+                'ok' => false,
+                'message' => 'No autorizado',
+                'error' => 'No tienes permiso para ver esta tarea',
+                'data' => null,
+            ], 403);
         }
 
-        return response()->json($tarea);
+        return response()->json([
+            'ok' => true,
+            'message' => 'Tarea obtenida exitosamente',
+            'error' => null,
+            'data' => $tarea,
+        ]);
     }
 
     public function update(Request $request, Meta $meta, Tarea $tarea)
     {
         if ($meta->iduser !== $request->user()->id || $tarea->idmeta !== $meta->id) {
-            return response()->json(['message' => 'No autorizado'], 403);
+            return response()->json([
+                'ok' => false,
+                'message' => 'No autorizado',
+                'error' => 'No tienes permiso para actualizar esta tarea',
+                'data' => null,
+            ], 403);
         }
 
         $request->validate([
@@ -76,21 +124,31 @@ class TareaController extends Controller
         }
 
         return response()->json([
+            'ok' => true,
             'message' => 'Tarea actualizada exitosamente',
-            'tarea' => $tarea,
+            'error' => null,
+            'data' => $tarea,
         ]);
     }
 
     public function destroy(Request $request, Meta $meta, Tarea $tarea)
     {
         if ($meta->iduser !== $request->user()->id || $tarea->idmeta !== $meta->id) {
-            return response()->json(['message' => 'No autorizado'], 403);
+            return response()->json([
+                'ok' => false,
+                'message' => 'No autorizado',
+                'error' => 'No tienes permiso para eliminar esta tarea',
+                'data' => null,
+            ], 403);
         }
 
         $tarea->delete();
 
         return response()->json([
+            'ok' => true,
             'message' => 'Tarea eliminada exitosamente',
+            'error' => null,
+            'data' => null,
         ]);
     }
 

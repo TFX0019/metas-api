@@ -18,6 +18,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('metas', MetaController::class);
 
     //* resource para los endpoints de tareas dentro de una meta
+    Route::get('tareas', [TareaController::class, 'allTareas']);
     Route::apiResource('metas.tareas', TareaController::class);
 
     //* lecturas para usuarios autenticados

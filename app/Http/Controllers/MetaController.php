@@ -9,11 +9,18 @@ class MetaController extends Controller
 {
     public function index(Request $request)
     {
+        $perPage = $request->input('per_page', 20);
+
         $metas = Meta::where('iduser', $request->user()->id)
             ->with('tareas')
-            ->get();
+            ->paginate($perPage);
 
-        return response()->json($metas);
+        return response()->json([
+            'ok' => true,
+            'message' => 'Metas obtenidas exitosamente',
+            'error' => null,
+            'data' => $metas,
+        ]);;
     }
 
     public function store(Request $request)
@@ -34,24 +41,41 @@ class MetaController extends Controller
         ]);
 
         return response()->json([
+            'ok' => true,
             'message' => 'Meta creada exitosamente',
-            'meta' => $meta->load('tareas'),
+            'error' => null,
+            'data' => $meta->load('tareas'),
         ], 201);
     }
 
     public function show(Request $request, Meta $meta)
     {
         if ($meta->iduser !== $request->user()->id) {
-            return response()->json(['message' => 'No autorizado'], 403);
+            return response()->json([
+                'ok' => false,
+                'message' => 'No autorizado',
+                'error' => 'No tienes permiso para ver esta meta',
+                'data' => null,
+            ], 403);
         }
 
-        return response()->json($meta->load('tareas'));
+        return response()->json([
+            'ok' => true,
+            'message' => 'Meta obtenida exitosamente',
+            'error' => null,
+            'data' => $meta->load('tareas'),
+        ]);
     }
 
     public function update(Request $request, Meta $meta)
     {
         if ($meta->iduser !== $request->user()->id) {
-            return response()->json(['message' => 'No autorizado'], 403);
+            return response()->json([
+                'ok' => false,
+                'message' => 'No autorizado',
+                'error' => 'No tienes permiso para actualizar esta meta',
+                'data' => null,
+            ], 403);
         }
 
         $request->validate([
@@ -64,21 +88,31 @@ class MetaController extends Controller
         $meta->update($request->only(['meta', 'puntaje', 'fecha_inicio', 'fecha_vence']));
 
         return response()->json([
+            'ok' => true,
             'message' => 'Meta actualizada exitosamente',
-            'meta' => $meta->load('tareas'),
+            'error' => null,
+            'data' => $meta->load('tareas'),
         ]);
     }
 
     public function destroy(Request $request, Meta $meta)
     {
         if ($meta->iduser !== $request->user()->id) {
-            return response()->json(['message' => 'No autorizado'], 403);
+            return response()->json([
+                'ok' => false,
+                'message' => 'No autorizado',
+                'error' => 'No tienes permiso para eliminar esta meta',
+                'data' => null,
+            ], 403);
         }
 
         $meta->delete();
 
         return response()->json([
+            'ok' => true,
             'message' => 'Meta eliminada exitosamente',
+            'error' => null,
+            'data' => null,
         ]);
     }
 }
