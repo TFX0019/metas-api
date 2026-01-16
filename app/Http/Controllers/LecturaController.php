@@ -8,10 +8,33 @@ use Illuminate\Support\Facades\Storage;
 
 class LecturaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $lecturas = Lectura::all();
-        return response()->json($lecturas);
+        $perPage = $request->input('per_page', 15);
+
+        $lecturas = Lectura::paginate($perPage);
+
+        return response()->json([
+            'ok' => true,
+            'message' => 'Todas las lecturas obtenidas exitosamente',
+            'error' => null,
+            'data' => $lecturas,
+        ]);
+        // $lecturas = Lectura::all();
+        // return response()->json($lecturas);
+    }
+
+    public function allLecturas(Request $request) {
+        $perPage = $request->input('per_page', 15);
+
+        $lecturas = Lectura::paginate($perPage);
+
+        return response()->json([
+            'ok' => true,
+            'message' => 'Todas las lecturas obtenidas exitosamente',
+            'error' => null,
+            'data' => $lecturas,
+        ]);
     }
 
     public function store(Request $request)
