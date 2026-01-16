@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LecturaController;
 use App\Http\Controllers\MetaController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\TareaController;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,17 @@ Route::middleware('auth:sanctum')->group(function () {
     //* resource para los endpoints de tareas dentro de una meta
     Route::get('tareas', [TareaController::class, 'allTareas']);
     Route::apiResource('metas.tareas', TareaController::class);
+
+    //* funciones de perfil
+    Route::prefix('profile')->group(function () {
+        Route::get('/', [ProfileController::class, 'show']);
+        Route::put('/', [ProfileController::class, 'update']);
+        Route::put('/name', [ProfileController::class, 'updateName']);
+        Route::put('/email', [ProfileController::class, 'updateEmail']);
+        Route::put('/password', [ProfileController::class, 'updatePassword']);
+        Route::post('/avatar', [ProfileController::class, 'updateAvatar']);
+        Route::delete('/avatar', [ProfileController::class, 'deleteAvatar']);
+    });
 
     //* lecturas para usuarios autenticados
     Route::get('lecturas', [LecturaController::class, 'index']);
