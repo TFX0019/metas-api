@@ -133,9 +133,41 @@ class LecturaController extends Controller
         ]);
     }
 
+    public function marcarNoLeida(Request $request, Lectura $lectura)
+    {
+        $user = $request->user();
+        
+        $user->lecturas()->detach($lectura->id);
+
+        return response()->json([
+            'ok' => true,
+            'message' => 'Lectura marcada como no leída',
+            'error' => null,
+            'data' => null,
+        ]);
+    }
+
+    public function idsLeidas(Request $request)
+    {
+        $ids = $request->user()
+            ->lecturas()
+            ->pluck('idlectura')
+            ->toArray();
+
+        return response()->json([
+            'ok' => true,
+            'message' => 'IDs de lecturas leídas obtenidos exitosamente',
+            'error' => null,
+            'data' => $ids,
+        ]);
+    }
+
     public function misLecturas(Request $request)
     {
-        $lecturas = $request->user()->lecturas;
+        $perPage = $request->input('per_page', 15);
+
+        $lecturas = $request->user()->lecturas()->paginate($perPage);
+
         return response()->json([
             'ok' => true,
             'message' => 'Tus lecturas obtenidas exitosamente',

@@ -37,6 +37,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('lecturas', [LecturaController::class, 'index']);
     Route::get('lecturas/{lectura}', [LecturaController::class, 'show']);
     Route::post('lecturas/{lectura}/marcar-leida', [LecturaController::class, 'marcarLeida']);
+    Route::delete('lecturas/{lectura}/marcar-leida', [LecturaController::class, 'marcarNoLeida']);
+    Route::get('lecturas-leidas/ids', [LecturaController::class, 'idsLeidas']);
     Route::get('mis-lecturas', [LecturaController::class, 'misLecturas']);
 
     //* funciones de rol (requiere permisos de administrador)
