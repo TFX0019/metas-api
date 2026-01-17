@@ -111,7 +111,7 @@ class TareaController extends Controller
 
         $request->validate([
             'tarea' => 'sometimes|string|max:255',
-            'tipo' => 'sometimes|in:a favor,suma puntos,en contra,resta puntos',
+            'tipo' => 'sometimes|in:positivo,negativo',
             'puntaje' => 'sometimes|integer|min:0',
             'estado' => 'sometimes|in:pendiente,cumplido,no cumplido',
         ]);
