@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Meta;
 use App\Models\Tarea;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class TareaController extends Controller
@@ -54,6 +55,15 @@ class TareaController extends Controller
                 'error' => 'No tienes permiso para crear tareas en esta meta',
                 'data' => null,
             ], 403);
+        }
+
+        if ($this->metaEstaVencida($meta)) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Meta vencida',
+                'error' => 'No se pueden crear tareas en una meta que ya ha vencido',
+                'data' => null,
+            ], 422);
         }
 
         $request->validate([
@@ -109,6 +119,15 @@ class TareaController extends Controller
             ], 403);
         }
 
+        if ($this->metaEstaVencida($meta)) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Meta vencida',
+                'error' => 'No se pueden modificar tareas de una meta que ya ha vencido',
+                'data' => null,
+            ], 422);
+        }
+
         $request->validate([
             'tarea' => 'sometimes|string|max:255',
             'tipo' => 'sometimes|in:positivo,negativo',
@@ -142,6 +161,15 @@ class TareaController extends Controller
             ], 403);
         }
 
+        if ($this->metaEstaVencida($meta)) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Meta vencida',
+                'error' => 'No se pueden eliminar tareas de una meta que ya ha vencido',
+                'data' => null,
+            ], 422);
+        }
+
         $tarea->delete();
 
         return response()->json([
@@ -152,8 +180,13 @@ class TareaController extends Controller
         ]);
     }
 
-    private function actualizarPuntosUsuario(Meta $meta, Tarea $tarea)
-    {
+    // validar si la meta esta vencida
+    private function metaEstaVencida(Meta $meta): bool {
+        return Carbon::parse($meta->fecha_vence)->isPast();
+    }
+
+    // actualizar puntos del usuario si la tarea fue completada
+    private function actualizarPuntosUsuario(Meta $meta, Tarea $tarea) {
         $user = $meta->user;
         
         if (in_array($tarea->tipo, ['positivo'])) {

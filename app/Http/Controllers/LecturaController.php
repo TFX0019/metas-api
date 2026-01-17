@@ -57,14 +57,21 @@ class LecturaController extends Controller
         ]);
 
         return response()->json([
+            'ok' => true,
             'message' => 'Lectura creada exitosamente',
-            'lectura' => $lectura,
+            'error' => null,
+            'data' => $lectura,
         ], 201);
     }
 
     public function show(Lectura $lectura)
     {
-        return response()->json($lectura);
+        return response()->json([
+            'ok' => true,
+            'message' => 'Lectura obtenida exitosamente',
+            'error' => null,
+            'data' => $lectura,
+        ]);
     }
 
     public function update(Request $request, Lectura $lectura)
@@ -86,8 +93,10 @@ class LecturaController extends Controller
         $lectura->update($request->only(['titulo', 'contenido']));
 
         return response()->json([
+            'ok' => true,
             'message' => 'Lectura actualizada exitosamente',
-            'lectura' => $lectura,
+            'error' => null,
+            'data' => $lectura,
         ]);
     }
 
@@ -99,8 +108,12 @@ class LecturaController extends Controller
 
         $lectura->delete();
 
+
         return response()->json([
+            'ok' => true,
             'message' => 'Lectura eliminada exitosamente',
+            'error' => null,
+            'data' => null,
         ]);
     }
 
@@ -113,13 +126,21 @@ class LecturaController extends Controller
         }
 
         return response()->json([
+            'ok' => true,
             'message' => 'Lectura marcada como leída',
+            'error' => null,
+            'data' => null,
         ]);
     }
 
     public function misLecturas(Request $request)
     {
         $lecturas = $request->user()->lecturas;
-        return response()->json($lecturas);
+        return response()->json([
+            'ok' => true,
+            'message' => 'Tus lecturas obtenidas exitosamente',
+            'error' => null,
+            'data' => $lecturas,
+        ]);
     }
 }
